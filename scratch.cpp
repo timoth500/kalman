@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-#include "/home/tim/workspace/scratch/src/functions.h"
+#include "functions.h"
 #include <random>
 using namespace std;
 
