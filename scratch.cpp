@@ -1,9 +1,9 @@
 //============================================================================
 // Name        : scratch.cpp
-// Author      : 
-// Version     :
+// Author      : Tim Wendler
+// Version     : 1.0
 // Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Description : Main code for kalman electron tracker
 //============================================================================
 
 #include <iostream>
