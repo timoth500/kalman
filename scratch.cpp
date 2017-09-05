@@ -1,47 +1,51 @@
-//============================================================================
-// Name        : scratch.cpp
-// Author      : Tim Wendler
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Main code for kalman electron tracker
-//============================================================================
+// kalman electron tracker
 
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-#include "functions.h"
+#include "/home/tgw9/local/kalman/functions.h"
 #include <random>
 using namespace std;
 
-
 int main() {
-
+	
+	double q=1.6e-19;
+	double dt = 1e-9;
+	double B[3] = {0.0,0.0,.9583};
 	int iterMax = 10;
-	double state[6] = {};
-	double stateMatrix[6][6] = {};
-	double u[6] = {};
-	double obsMatrix[6][6] = {};
+	double ax,ay,az = 0;
+	double state[6] = {};	
+	double stateMatrix[6][6] = {{1.0,0.0,0.0,dt,0.0,0.0},{0.0,1.0,0.0,0.0,dt,0.0},{0.0,0.0,1.0,0.0,0.0,dt},{0,0,0,1,0,0},{0,0,0,0,1,0},{0,0,0,0,0,1}};
+	double u[6] = {ax,ay,az,ax,ay,az};
+	double inputMatrix[6][6] = {{.01,0,0,0,0,0},{0,.01,0,0,0,0},{0,0,.01,0,0,0},{0,0,0,1,0,0},{0,0,0,0,1,0},{0,0,0,0,0,1}};
 	identify(stateMatrix);
-	identify(obsMatrix);
-
+	identify(inputMatrix);
+	double coMatrix[6][6] = {};
 	double noise[6] = {};
 	addNoise(noise);
-
+	
 	seeState(state);
 
 	for(int i = 0; i < iterMax; i++){
-
+		
+		// Step 0: Estimate Lorentz force vector
+			
+		cross(state ,B);
+		ax = 1.0;
+		ay = 1.0;
+		az = 1.0;
 		// Step 1: Predict the state vector
 		cout << "Predict the state vector: " << i << endl;
-		predictState(stateMatrix,state,obsMatrix,u,noise);
+		predictState(stateMatrix,state,inputMatrix,u,noise);
 		seeState(state);
 		usleep(1000000);
 
 		// Step 2: Predict the covariance matrix
-		//cout << "Predict the covariance matrix: " << i  << endl;
-		//usleep(1000);
+		cout << "Predict the covariance matrix: " << i  << endl;
+		predictCovariance(coMatrix);
+		usleep(100000);
 
-		// Step 3: Calculate the Kalman gain
+		// Step 6: Calculate the Kalman gain
 		//cout << "Calculate the Kalman gain: " << i  << endl;
 		//usleep(10000);
 
