@@ -13,11 +13,25 @@
 #ifndef FUNCTIONS_H_
 #define FUNCTIONS_H_
 
+namespace tracker {
+
 
 void matrixOperate(double a[6][6], double b[6]){
 	for(int i = 0;i<6;i++)
 		for(int j = 0;j<6;j++)
 			b[i] = a[j][i]*b[i];
+}
+
+void matrixAdd(double a[6][6], double b[6][6]){
+	for(int i=0;i<6;i++)
+		for(int j = 0;j<6;j++)
+			a[i][j] = a[i][j] + b[i][j];
+}
+
+void matrixTranspose(double a[6][6]){
+	for(int i=0;i<6;i++)
+		for(int j = 0;j<6;j++)
+			a[i][j] = a[j][i];
 }
 
 void vectorAdd(double a[6],double b[6]){
@@ -30,10 +44,9 @@ void identify(double a[6][6]){
 		a[i][i] = 1.0;
 }
 
-void predictState(double sm[6][6],double s[6], double os[6][6], double u[6], double noise[6]){
-	//do something
+void predictState(double sm[6][6],double s[6], double os[6], double u[6], double noise[6]){
 	matrixOperate(sm,s);
-	matrixOperate(os,u);
+	for(int i=1;i<6;i++) u[i]=os[i]*u[i];
 	vectorAdd(s,u);
 	vectorAdd(s,noise);
 
@@ -55,12 +68,12 @@ void predictCovariance(double a[6][6]){
 	std::cout << "in function now" << std::endl;
 }
 
-void cross(double a[6], double b[6]){
-	double c[3];
-	c[0] = a[3] - b[3];
-	c[1] = b[4] - a[4];
-	c[2] = a[5] - b[5];
-	a = c;
+void cross(double u[3], double v[3]){
+	u[0] = u[1]*v[2] - u[2]*v[1];
+	u[1] = u[2]*v[0] - u[0]*v[2];
+	u[2] = u[0]*v[1] - u[1]*v[0];
+}
+
 }
 
 

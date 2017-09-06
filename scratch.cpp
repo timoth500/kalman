@@ -3,45 +3,37 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-#include "/home/tgw9/local/kalman/functions.h"
-#include <random>
+#include "/home/tim/workspace/scratch/src/functions.h"
+#include "/home/tim/workspace/scratch/src/components.h"
+#include "/home/tim/workspace/scratch/src/constants.h"
+#include "/home/tim/workspace/scratch/src/initialconditions.h"
+
 using namespace std;
+using namespace tracker;
 
 int main() {
-	
-	double q=1.6e-19;
-	double dt = 1e-9;
-	double B[3] = {0.0,0.0,.9583};
+
+	status a;
+	cout << a.data[0] << endl;
 	int iterMax = 10;
-	double ax,ay,az = 0;
-	double state[6] = {};	
-	double stateMatrix[6][6] = {{1.0,0.0,0.0,dt,0.0,0.0},{0.0,1.0,0.0,0.0,dt,0.0},{0.0,0.0,1.0,0.0,0.0,dt},{0,0,0,1,0,0},{0,0,0,0,1,0},{0,0,0,0,0,1}};
-	double u[6] = {ax,ay,az,ax,ay,az};
-	double inputMatrix[6][6] = {{.01,0,0,0,0,0},{0,.01,0,0,0,0},{0,0,.01,0,0,0},{0,0,0,1,0,0},{0,0,0,0,1,0},{0,0,0,0,0,1}};
-	identify(stateMatrix);
-	identify(inputMatrix);
-	double coMatrix[6][6] = {};
-	double noise[6] = {};
-	addNoise(noise);
-	
-	seeState(state);
 
 	for(int i = 0; i < iterMax; i++){
-		
+
 		// Step 0: Estimate Lorentz force vector
-			
-		cross(state ,B);
-		ax = 1.0;
-		ay = 1.0;
-		az = 1.0;
+
+		cross(s,B);
+		u[0] = (q/m)*s[0];u[1] = (q/m)*s[1];u[2] = (q/m)*s[2];u[3] = (q/m)*s[0];u[4] = (q/m)*s[1];u[5] = (q/m)*s[2];
+		seeState(u);
 		// Step 1: Predict the state vector
 		cout << "Predict the state vector: " << i << endl;
-		predictState(stateMatrix,state,inputMatrix,u,noise);
-		seeState(state);
+		predictState(stateMatrix,state,input,u,noise);
+		//seeState(state);
+		seeState(u);
 		usleep(1000000);
 
 		// Step 2: Predict the covariance matrix
 		cout << "Predict the covariance matrix: " << i  << endl;
+
 		predictCovariance(coMatrix);
 		usleep(100000);
 
